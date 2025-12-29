@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEMS 交换院校指南</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            background-color: #2196F3;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .region-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .region-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .region-card h2 {
+            color: #2196F3;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .region-card p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .university-list {
+            display: none;
+            padding-left: 20px;
+            margin-top: 20px;
+        }
+        
+        .university-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .university-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .university-card h3 {
+            color: #2196F3;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .university-card p {
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .detail-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .detail-section h4 {
+            color: #2196F3;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .back-button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background-color: #0b7dda;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .region-card, .university-card, .detail-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="home-view">
+            <div class="header">
+                <h1>CEMS 交换院校指南</h1>
+                <p>选择一个地区查看详细信息</p>
+            </div>
+            
+            <div class="region-card" onclick="showRegion('europe')">
+                <h2>欧洲</h2>
+                <p>2 所学校</p>
+            </div>
+            
+            <div class="region-card" onclick="showRegion('asia')">
+                <h2>亚洲</h2>
+                <p>1 所学校</p>
+            </div>
+            
+            <div class="region-card" onclick="showRegion('north-america')">
+                <h2>北美洲</h2>
+                <p>1 所学校</p>
+            </div>
+        </div>
+        
+        <div id="region-view" class="hidden">
+            <button class="back-button" onclick="showHome()">返回主页</button>
+            <div class="header">
+                <h1 id="region-title"></h1>
+            </div>
+            <div id="universities-list"></div>
+        </div>
+        
+        <div id="university-view" class="hidden">
+            <button class="back-button" onclick="goBackToRegion()">返回地区</button>
+            <div id="university-detail"></div>
+        </div>
+    </div>
+
+    <script>
+        // 数据
+        const exchangeData = [
+            {
+                id: 'europe',
+                name: '欧洲',
+                universities: [
+                    {
+                        id: 'hsg',
+                        name: 'University of St. Gallen (HSG)',
+                        location: '瑞士',
+                        semester: '春季学期四月初会有春假，可以利用好时间去旅行',
+                        favorite: '地理位置优越，去欧洲其他国家也比较方便',
+                        complaint: '物价高昂，美食荒漠',
+                        recommendedCourse: 'Aviation System Management',
+                        specialThanks: '陈文杰',
+                        visa: '下签很快，两个工作日',
+                        preparation: '前面流程说得很详细了',
+                        flight: '也可以考虑落地别的国家，例如意大利，玩一圈坐sbb到苏黎世再转圣加仑。意大利海关比较水，可以带一些吃的',
+                        courseInfo: '春季学期有Business Project 之后，基本上再加上其他必修课（global citizenship 、Business Ethic 和global leadership）ECTS 就差不多了，注意不超出，否则可能会随机删除课程',
+                        courseAssessment: '大多是pre，小组作业',
+                        creditTransfer: '提前规划好要选的课程以及学分情况，发邮件给孙亚程老师，孙老师基本都会同意，同意后即可放心选课，丝滑转换学分',
+                        learningExperience: '建议发挥自己的"东方优势"，比如中国视角、编程能力，在小组合作中体现自己的价值和参与，更容易收获认同',
+                        itemsNeeded: '建议带一套带有羽绒内胆的冲锋衣，瑞士冬天雨雪天较多，冲锋衣可以有效防风很有安全感，另外滑雪也可以用上',
+                        otherProcedures: '记得下火车就买SBB的GA青年夜间卡，100瑞半年，19点之后交通免费绝对可以回本',
+                        accommodation: '学校提供的student housing价格700-900瑞郎/月，可以自选studio或者shared apartment，会提供shared kitchen和卫浴！需要抢宿舍',
+                        accommodationLife: '居留证和保险前面已经说了',
+                        dining: '自炊：食材方面Aldi 和Migros比较便宜，Coop 略贵一些；食堂：学校有两个食堂（无晚饭），白人饭价格在8-15瑞郎/顿左右；市区：除快餐外，人均二/三十瑞郎起步吧，物价略高',
+                        bank: '我买的swisscare，网上可以直接买，50+瑞郎那一档',
+                        insurance: '其他全球险也可以抵消圣加仑州政府的强制保险需求，但需要提前查看抵消条件',
+                        others: '治安好，sbb公共交通准时，出行很方便',
+                        clubs: 'HSG的CEMS Club（CCSG）；Buddy System，会举办pub crawl、hiking、cheese factory visit等等活动，及时关注WhatsApp群消息；Asian club：有很多华人',
+                        transportation: 'sbb半价卡和GA夜间卡必备；可以考虑购买interrail欧铁通票，有10日免费乘坐所有火车的机会，铁轨旅行规划得好可以回本',
+                        travel: '在瑞士境内也可以考虑自驾，中国驾照受到认证，短期旅行相比sbb性价比很高；周边各国铁路交通直达，可以体验öbb 的过夜列车到维也纳；徳铁经常晚点需要小心；苏黎世到米兰4h 直达；廉航发达，可以飞去罗马、英国等国家。',
+                        entertainment: '瑞士不是欧盟成员国，注意一些地方的门票半价不适用（例如卢浮宫）；瑞士超市关门很早，习惯当地人的生活作息；瑞士风景太美，适当放慢节奏体验下人生'
+                    },
+                    {
+                        id: 'lse',
+                        name: 'London School of Economics (LSE)',
+                        location: '英国',
+                        semester: '秋季学期9月中（block seminar开始）到12月中，正式上课9月底，学期结束后可离开学校，线上交作业 reading week Dom的课不上课',
+                        favorite: '学校位于市中心，购物、吃饭都很方便',
+                        complaint: '和欧洲大陆稍微远一点，加上课程拆为lecture+seminar，几乎每天要去学校，不方便欧洲游',
+                        recommendedCourse: 'consumer insights挺有趣的，accounting，management and control课程内容比较实用，对management思维有帮助',
+                        specialThanks: '贺雨欣',
+                        visa: '申请标准旅游签即可，相关资料不复杂（自行查阅小红书），15个工作日能出签，拿2年多次很容易，最好是在国内申好申根签，方便欧洲游',
+                        preparation: '可以提前定好，价格会便宜点，转机的也会便宜',
+                        flight: '国航上传LSE邮箱或者offerletter可以定留学生票（行李多带一件），携程也有留学生票，但是不清楚交换生需要什么材料，需要提前了解',
+                        courseInfo: '秋季学期选4门课，一门GBS必修，三门选修，基本以lecture+seminar为主，放在不同的时间上课',
+                        courseAssessment: '基本都有essay，根据不同课程，交换生会采取group project，take-home exam的形式考核，学期结束后可以直接离校，所有作业只需在线上完成',
+                        creditTransfer: '前面提到了lecture+seminar的制度导致"上课"本身流于形式。Lecture几乎不设考勤要求，但seminar比较严格',
+                        learningExperience: '老师上课都很认真，但是风格整体来说一板一眼的比较多，有点枯燥。组队的同学我遇到的都比较nice，都很认真，没有freerider',
+                        itemsNeeded: '生活用品几乎可以不带，提前在Amazon下单、抵达后再周边超市买或者小红书提前收二手，可以带点零食。女生的话要旅游、要party的话，建议多带不同场合的衣服',
+                        otherProcedures: '注意LSE的邮箱，有一些pre-enrollment相关的线上注册',
+                        accommodation: '短期住宿很难找，不建议通过中介找student apartment，房间小，而且比较贵，airbnb也比较贵，建议通过小红书找房东直租/个人转租，一定要视频看房、或者到伦敦后先住酒店，线下看房后确认。近一点的短租房价在每月1500磅-2000磅per person，浮动取决于房型、是否包bill、位置、是否合租等',
+                        accommodationLife: '',
+                        dining: '白人饭很难吃，但伦敦有很多不同种类的餐厅，可以根据googlemap看评分，唐人街中餐也很多',
+                        bank: '据说可以办revolut和monzo，方便手机支付，自行看小红书攻略',
+                        insurance: '',
+                        others: '',
+                        clubs: 'CEMS会举办很多活动，几乎每周都有，包括movie night、hiking、paintball、party，学校career hub也有很多seminar可以报名参加',
+                        transportation: '伦敦地铁很方便，但也真的贵，非高峰期2.7磅，高峰期2.8磅，巴士便宜点，在1.7磅，可以办oystercard，topup后方便使用，有7磅工本费。周边旅游多的话，可以办railcard，买票有优惠，更省钱',
+                        travel: '伦敦有很多经典剧，例如wicked、歌剧魅影等，晚上有很多bar和pub，可以和同学一起去，旅游一定推荐白崖，真的巨美',
+                        entertainment: '把英国的四个区域（英格兰、苏格兰、北爱尔兰、威尔士）全部探索了一遍，个人觉得英国虽然不算辽阔但地区之间人文景观差距还是很大的。推荐大家如果对英国文化感兴趣，也可以多多体验不同区域的英国从英国出发'
+                    }
+                ]
+            },
+            {
+                id: 'asia',
+                name: '亚洲',
+                universities: [
+                    {
+                        id: 'keio',
+                        name: 'Keio University 日本庆应义塾大学',
+                        location: '日本',
+                        semester: '可选课包括KBS/KMD/KEC等学院，KBS课程最早（9月初），9月中旬block seminar，10月初其他学院开始上课，大部分课11月/12月结束，有些课1月底结课（如日语课）',
+                        favorite: 'ACGN爱好者的购物天堂，美景多，适合旅游和圣地巡礼，生活方便，居民非常有礼貌',
+                        complaint: '蔬菜水果贵，与日本同学交流的机会较少，电子化程度较低，习惯使用信件/纸币/票据',
+                        recommendedCourse: 'Decision Making（美国教授，硬核，课程很有启发）， Otaku Culture（宅文化，教授上课会cos，是铁杆东方Project粉）',
+                        specialThanks: '黄平',
+                        visa: '需要等~6月份，先由KEIO代办COE，收到邮件以后才可以申签证，流程比较简单，时间大概10天以内',
+                        preparation: '签证无法个人申请，只接受机构代办，可以上使馆官网找对应的旅行社打电话/淘宝上找代办店家，按照机构要求，寄送纸质材料后，机构会将办好签证的护照寄回',
+                        flight: '选择机票时注意托运的额度，可以选择托运两件大件行李+一件随身行李的机票',
+                        courseInfo: '全英教学，有日语课提供，课上国际生比例较高；日吉（横滨）校区：KBS（商学院），KMD（媒体营销）；三田（东京）校区：KEC（经济）；两个校区相距1小时电车，选课时需要考虑距离',
+                        courseAssessment: '考核压力不大，大部分包括essay/report/presentation/group discussion in class/exam ...',
+                        creditTransfer: '需要提前与孙老师确认，KBS能转回来的课较多，KMD比较难',
+                        learningExperience: '教授们都很nice而且willing to help，如果有个性化问题也可以请他们课后开小灶，可能学到的比课堂上更多；日本同学的英语不是很好，但很多人都努力交流；日常与国际生们交流较多',
+                        itemsNeeded: '购物方便，宿舍有床铺用品提供；强烈推荐在百元店购买生活用品',
+                        otherProcedures: '到日本以后要尽快办：区役所更新在留卡（加上住址）+加入国民健康保险和国民年金系统（账单会邮寄到信箱，需要去便利店用现金缴费）',
+                        accommodation: '学校宿舍包水电，拎包入住，有WiFi，价格为7w-10w日元；TsunashimaSST体验：房子新，离日吉校区18min walk，隔壁就是商场（百元店/超市/饭店/邮局/书店...）',
+                        accommodationLife: '部分宿舍提供餐饮，大部分宿舍有厨房',
+                        dining: '外食可选；超市/便利店；连锁（萨莉亚、麦当劳、肯德基...）；日料（各式各样的拉面店、烧鸟、盖饭）；宿舍line群偶尔会组织节日活动，可以积极参加',
+                        bank: '本人未办理日本银行卡，据说办银行卡需要电话卡',
+                        insurance: '',
+                        others: '',
+                        clubs: '日本春季是第一学期，CEMS Club几乎没有日本学生，我们这届Club都由交换生组成；与其他交换生交流较多，我们举办了多个小活动+多次远程游',
+                        transportation: '打车天价，建议上下学走路，游玩坐电车/巴士（小城市）；由于Keio有两个校区，选课需要注意距离，两地相隔1小时电车车程，不能选择back-to-back的课程',
+                        travel: '课程平时可以在东京/横滨附近短途游，KBS/KMD的大部分课在11月底/12月初结课，之后有较多游玩机会',
+                        entertainment: '卡拉OK非常便宜而且饮料冰淇淋任吃；东京周边推荐：镰仓/日光（看红叶的好地方）；除去东京/横滨市中心以外，大部分时候日本人不太会讲英语，建议学一点入门的塑料日语+手语；Suica非常方便，可以用于公共交通/便利店/部分饭店支付'
+                    }
+                ]
+            },
+            {
+                id: 'north-america',
+                name: '北美洲',
+                universities: [
+                    {
+                        id: 'ivey',
+                        name: 'Ivey Business School',
+                        location: '加拿大',
+                        semester: '2025秋季：8.25开始一周Block Seminar，期间有组织去多伦多参观和小长假，学期从9.9-11.25那周，课选的好11月初会有12天Reading Week假期',
+                        favorite: '虽然要contribution但整体课业压力不大，一周5天可以旅游，也很喜欢这里的课堂，同学和老师的互动交流氛围很好，老师都很牛；遇到的很多加拿大人都很热情，下公交前会说Thank you！',
+                        complaint: '小伦敦有点无聊+公交系统班次太不频繁了，从家到学校的公交每40分钟一趟',
+                        recommendedCourse: 'Economy and Society 英国教授厉害且讲的很生动；Data Driven Management，教Excel最优化和概率/蒙特卡洛模拟',
+                        specialThanks: '冯舟',
+                        visa: '旅游签或学签均可，旅游签更快更方便185CAD，但在加拿大不能兼职（如送外卖哈哈）/实习，学签有被拒绝或很慢的风险',
+                        preparation: '最好提前3个月开始申请，我是7月才在香港递交申请也来得及20天左右下了十年多次旅游签，但也有朋友北京申只给了交换生半年单次entry的旅游签，这个期限和次数玄学看签证官心情',
+                        flight: '机票转机+1个23kg托运行李和手提单程约5k+元，可以提前两个月不同平台和方案比价看看',
+                        courseInfo: 'Block Seminar一周感觉Ivey安排的挺好的很充实，不过需要交300CAD，cover上课费用和期间提供的食物咖啡等杂费；秋季是1门必修+3门选修，老师们都挺厉害的，这里主要是IB/DM/BA三个msc项目，Ivey非常重视案例教学和课堂发言，每次上课都要带名牌，会有人记contribution，课前读好Case上课多和老师交流就好了',
+                        courseAssessment: '大部分课没有考试，但一般contribution占比30-40%+，自己可以在选课时看下syllabus；Hardskill的课会有Midterm或Final，其他以Case为主的课一般是个人作业1-2个+1-2个小组作业（pre或写case/report），挺轻松的，而且遇到的CEMS欧洲交换生们都超级靠谱',
+                        creditTransfer: '很注重应用，宏观经济老师会把教学内容和商业&国际事件结合，很有国际视野；每门课7.5ECTs，除了必修外再选3门选修即可满足最低要求',
+                        learningExperience: '感觉体验比清华好，这里上课更沉浸，大部分课堂禁止用电子设备，同学也更投入在课堂贡献上，每节课按个人所需发言，Ivey视出勤但不参与课堂近似为absent，有时老师会cold call',
+                        itemsNeeded: '推荐带个转换插头方便充电，不过学校刚开学也会发；多带点夏秋衣服肯定用得上，加拿大完全没有我想象中的冷，能穿短袖裙子的机会还是挺多的',
+                        otherProcedures: 'Ivey一般会在BlockSeminar的1-2个月之前开始安排选课、申请学校宿舍等事项，前期通过清华邮箱联系，在virtual orientation之后可能就会在Ivey邮箱发通知，注意关注Ivey邮箱',
+                        accommodation: '学校会提供住宿，整个学期一共5,000-6000加币，有单独的卧室，和另外几个同学共用卫生间，有厨房，离Ivey有的近有的稍远；校外自己租房则性价比更高，我们的是1000CAD*4个月，推荐提前2-3个月开始了解信息，找到靠谱短租需要花时间，也可以早点加入WhatsApp群里和交换生们商量合租',
+                        accommodationLife: '',
+                        dining: 'Ivey的食堂略贵，一顿简餐三明治wrap up等12+CAD，学院内有星巴克，最近的Tims 1-2km，出去聚餐吃的好点人均40-50加币；学校meal plan是3,000加币，自己做饭就不推荐买，比meal plan划算很多，和朋友合租自己做饭人均6-8刀/顿',
+                        bank: '学费+国际生保险必须交，969CAD；主要使用父母国内银行visa信用卡副卡，但过来后趁着开学前学生优惠办了RBC的debit card，方便同学间转账和付房租等',
+                        insurance: '提前换了1200加币现金，但要用到cash的地方不多，且来之后加币从5.24贬值到5.04...可以少换点',
+                        others: '加拿大有小费文化，出去吃饭等一般要给15%+的tip；看到的价格一般是税前，Ontario税率13%，强烈推荐去班夫旅游的时候去Calgary购物天堂shopping！！5%的税很适合买加拿大鹅、始祖鸟、lulu等品牌，真的香！',
+                        clubs: 'CEMS CLUB有挺多活动（pub crawl 2次可以看个人喜好体验下北美club和欧洲同学对club的热情；potluck；houseparty；桌游等），也可以加学校的社团；学期中还有一次和康奈尔CEMS联谊去Niagara falls玩',
+                        transportation: '没有地铁，北美没车出行真的很不方便！！日常主要靠公交，一趟2-3加币，推荐blockseminar期间跟着在学校办一张BusPass，一个学期167加币无限坐，需用cash或加拿大银行借记卡支付',
+                        travel: '旅游从小伦敦机场出发机票较贵，从家打车过去也要近40刀，推荐在busbud买票30刀左右坐2-3hbus到多伦多机场',
+                        entertainment: '多伦多（尼亚加拉瀑布离得较近）、蒙特利尔&魁北克&渥太华一条线、温哥华&Victoria、Banff&Jasper自驾游五天（加拿大小新疆川西）；还可以去美国、南美等，没有美签可以去墨西哥和坎昆全包酒店度假！！；黑五可以去outlet采购，力度很大'
+                    }
+                ]
+            }
+        ];
+        
+        let currentRegion = null;
+        let currentUniversity = null;
+        
+        // 显示地区详情
+        function showRegion(regionId) {
+            const region = exchangeData.find(r => r.id === regionId);
+            if (!region) return;
+            
+            currentRegion = region;
+            
+            document.getElementById('home-view').classList.add('hidden');
+            document.getElementById('region-view').classList.remove('hidden');
+            document.getElementById('region-title').textContent = `${region.name}的交换院校`;
+            
+            const universitiesList = document.getElementById('universities-list');
+            universitiesList.innerHTML = '';
+            
+            region.universities.forEach(university => {
+                const universityCard = document.createElement('div');
+                universityCard.className = 'university-card';
+                universityCard.innerHTML = `
+                    <h3>${university.name}</h3>
+                    <p>${university.location}</p>
+                `;
+                universityCard.onclick = () => showUniversity(university.id);
+                universitiesList.appendChild(universityCard);
+            });
+        }
+        
+        // 显示大学详情
+        function showUniversity(universityId) {
+            const university = currentRegion.universities.find(u => u.id === universityId);
+            if (!university) return;
+            
+            currentUniversity = university;
+            
+            document.getElementById('region-view').classList.add('hidden');
+            document.getElementById('university-view').classList.remove('hidden');
+            
+            const detailContainer = document.getElementById('university-detail');
+            detailContainer.innerHTML = `
+                <div class="detail-section">
+                    <h2 style="text-align: center; margin-bottom: 20px;">${university.name}</h2>
+                    <p style="text-align: center; font-size: 1.2rem; color: #666;">${university.location}</p>
+                </div>
+                
+                ${university.semester ? `
+                <div class="detail-section">
+                    <h4>学期时间&重要假期</h4>
+                    <p>${university.semester}</p>
+                </div>` : ''}
+                
+                ${university.favorite ? `
+                <div class="detail-section">
+                    <h4>最喜欢的一点</h4>
+                    <p>${university.favorite}</p>
+                </div>` : ''}
+                
+                ${university.complaint ? `
+                <div class="detail-section">
+                    <h4>最想吐槽的一点</h4>
+                    <p>${university.complaint}</p>
+                </div>` : ''}
+                
+                ${university.recommendedCourse ? `
+                <div class="detail-section">
+                    <h4>最推荐的课程</h4>
+                    <p>${university.recommendedCourse}</p>
+                </div>` : ''}
+                
+                ${university.specialThanks ? `
+                <div class="detail-section">
+                    <h4>特别鸣谢</h4>
+                    <p>${university.specialThanks}</p>
+                </div>` : ''}
+                
+                ${university.visa ? `
+                <div class="detail-section">
+                    <h4>签证申请</h4>
+                    <p>${university.visa}</p>
+                </div>` : ''}
+                
+                ${university.preparation ? `
+                <div class="detail-section">
+                    <h4>行前准备</h4>
+                    <p>${university.preparation}</p>
+                </div>` : ''}
+                
+                ${university.flight ? `
+                <div class="detail-section">
+                    <h4>机票预订</h4>
+                    <p>${university.flight}</p>
+                </div>` : ''}
+                
+                ${university.courseInfo ? `
+                <div class="detail-section">
+                    <h4>课程介绍</h4>
+                    <p>${university.courseInfo}</p>
+                </div>` : ''}
+                
+                ${university.courseAssessment ? `
+                <div class="detail-section">
+                    <h4>课程考核</h4>
+                    <p>${university.courseAssessment}</p>
+                </div>` : ''}
+                
+                ${university.creditTransfer ? `
+                <div class="detail-section">
+                    <h4>学分转换</h4>
+                    <p>${university.creditTransfer}</p>
+                </div>` : ''}
+                
+                ${university.learningExperience ? `
+                <div class="detail-section">
+                    <h4>学习体验</h4>
+                    <p>${university.learningExperience}</p>
+                </div>` : ''}
+                
+                ${university.itemsNeeded ? `
+                <div class="detail-section">
+                    <h4>物品准备</h4>
+                    <p>${university.itemsNeeded}</p>
+                </div>` : ''}
+                
+                ${university.otherProcedures ? `
+                <div class="detail-section">
+                    <h4>其他手续</h4>
+                    <p>${university.otherProcedures}</p>
+                </div>` : ''}
+                
+                ${university.accommodation ? `
+                <div class="detail-section">
+                    <h4>住宿条件</h4>
+                    <p>${university.accommodation}</p>
+                </div>` : ''}
+                
+                ${university.accommodationLife ? `
+                <div class="detail-section">
+                    <h4>住宿生活</h4>
+                    <p>${university.accommodationLife}</p>
+                </div>` : ''}
+                
+                ${university.dining ? `
+                <div class="detail-section">
+                    <h4>餐饮条件</h4>
+                    <p>${university.dining}</p>
+                </div>` : ''}
+                
+                ${university.bank ? `
+                <div class="detail-section">
+                    <h4>银行</h4>
+                    <p>${university.bank}</p>
+                </div>` : ''}
+                
+                ${university.insurance ? `
+                <div class="detail-section">
+                    <h4>保险</h4>
+                    <p>${university.insurance}</p>
+                </div>` : ''}
+                
+                ${university.others ? `
+                <div class="detail-section">
+                    <h4>其他方面</h4>
+                    <p>${university.others}</p>
+                </div>` : ''}
+                
+                ${university.clubs ? `
+                <div class="detail-section">
+                    <h4>社团活动</h4>
+                    <p>${university.clubs}</p>
+                </div>` : ''}
+                
+                ${university.transportation ? `
+                <div class="detail-section">
+                    <h4>交通出行</h4>
+                    <p>${university.transportation}</p>
+                </div>` : ''}
+                
+                ${university.travel ? `
+                <div class="detail-section">
+                    <h4>旅游</h4>
+                    <p>${university.travel}</p>
+                </div>` : ''}
+                
+                ${university.entertainment ? `
+                <div class="detail-section">
+                    <h4>娱乐</h4>
+                    <p>${university.entertainment}</p>
+                </div>` : ''}
+            `;
+        }
+        
+        // 返回主页
+        function showHome() {
+            document.getElementById('region-view').classList.add('hidden');
+            document.getElementById('home-view').classList.remove('hidden');
+        }
+        
+        // 返回地区页面
+        function goBackToRegion() {
+            document.getElementById('university-view').classList.add('hidden');
+            document.getElementById('region-view').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
