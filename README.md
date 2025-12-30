@@ -1,5 +1,6 @@
 # CEMS 交换院校指南
-
+通过netlify发布：
+https://elegant-starburst-6f74f1.netlify.app
 这是一个基于 Next.js 和 InsForge 云数据库构建的 CEMS 交换院校指南应用。
 
 测试账号
